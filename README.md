@@ -1,2 +1,2 @@
 # setup-guides
-A guideline of setting up many things
+A guideline of setup for many things
