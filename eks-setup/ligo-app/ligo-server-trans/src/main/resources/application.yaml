@@ -1,0 +1,36 @@
+spring:
+  config:
+    import: optional:application-secret.properties
+
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      properties:
+        spring.json.trusted.packages: "*"
+#      group-id: chat-group
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+    producer:
+#      acks: -1
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            trusted.packages: "*"
+  groq:
+    api-key: ${GROQ_API_KEY}
+    api-url: ${GROQ_API_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+
+server:
+  port: 8088

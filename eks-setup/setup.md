@@ -2,6 +2,8 @@
 
 This guide outlines the steps to create an Amazon EKS cluster using the AWS Console, set up an ingress controller, apply Horizontal Pod Autoscaling (HPA), and manage multiple AWS accounts for accessing different EKS clusters.
 
+An example for using this setup, refer to the following folder: 
+
 **Reference:** [Provision AWS EKS from the AWS Console](https://mycloudjourney.medium.com/provision-aws-eks-from-the-aws-console-8c253595a546)
 
 ## 1. Create EKS Cluster via AWS Console
