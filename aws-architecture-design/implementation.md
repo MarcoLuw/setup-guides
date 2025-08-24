@@ -1,6 +1,6 @@
 # Detailed Design & Implementation
 For the first phase, we will implement a simplified version of 3-tier architecture with the following components:
-- VPC with public and private subnets across 3 AZs, 2 regions (ap-southeast-2, ap-northeast-2).
+- VPC with public and private subnets across 3 AZs, 2 regions (ap-southeast-2, ap-northeast-2), 3 environments (Dev, Staging, Prod).
 - 1 public subnet for web tier, 1 private subnet for application tier, 1 private subnet for database tier in each AZ.
 - Internet Gateway for public subnet access to/from internet.
 - NAT Gateways in public subnets for outbound internet access from private subnets.
@@ -145,3 +145,6 @@ Extra components:
 ### Secrets Manager (configured later)
 - Use Secrets Manager to manage sensitive information (e.g. DB credentials, API keys).
 - Rotate secrets automatically for enhanced security.
+
+## Future Enhancements
+- Multi-account architecture for isolation and security: Prod in one account, Dev/Staging in another.
