@@ -1,20 +1,36 @@
-FROM node:18 AS build
+# Build stage
+FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy package files
+COPY package*.json ./
 
-RUN npm install
+# Install dependencies
+RUN npm ci
 
+# Copy source code
 COPY . .
 
+# Accept build argument for backend URL
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
+# Build the application
 RUN npm run build
 
+# Production stage
 FROM nginx:alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy custom nginx configuration if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy built files from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
 
-# Khởi động nginx
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

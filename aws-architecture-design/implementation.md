@@ -48,12 +48,12 @@ Extra components:
 
 | Region         | Environment    | VPC CIDR       |
 |----------------|----------------|----------------|
-| ap-southeast-2 | Prod           | 172.16.0.0/16  |
+| ap-southeast-2 | Dev            | 172.16.0.0/16  |
 |                | Staging        | 172.20.0.0/16  |
-|                | Dev            | 172.24.0.0/16  |
-| ap-northeast-2 | Prod           | 172.17.0.0/16  |
+|                | Prod           | 172.24.0.0/16  |
+| ap-northeast-2 | Dev            | 172.17.0.0/16  |
 |                | Staging        | 172.21.0.0/16  |
-|                | Dev            | 172.25.0.0/16  |
+|                | Prod           | 172.25.0.0/16  |
 
 #### 3. Subdivide inside each VPC (subnets)
 - Take one VPC (172.16.0.0/16 prod-ap-southeast-2). Split into /20 subnets

@@ -83,7 +83,7 @@ public class TranslationService {
     try {
       RestTemplate restTemplate = new RestTemplate();
       HttpHeaders headers = new HttpHeaders();
-      headers.set("Authorization", groqApiKey);
+      headers.set("Authorization", "Bearer " + groqApiKey);
       headers.setContentType(MediaType.APPLICATION_JSON);
 
       HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);

@@ -28,7 +28,27 @@ function ChatPage({ username }) {
   const messagesEndRef = useRef(null);
   const [isGrammarCheckedVisible, setIsGrammarCheckedVisible] = useState(true);
   const [isAskLigoBotVisible, setIsAskLigoBotVisible] = useState(true);
-  const BACKEND_URL = "http://a0cd0ecf534dc4c7eaf06493f9ebf310-1479717945.ap-northeast-2.elb.amazonaws.com/chat"
+  
+  // Use environment variable for backend URL, fallback to localhost for local development
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+
+  // Load recent messages when component mounts
+  useEffect(() => {
+    const loadRecentMessages = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/messages/recent`);
+        if (response.ok) {
+          const recentMessages = await response.json();
+          setMessages(recentMessages);
+          console.log("Loaded recent messages:", recentMessages.length);
+        }
+      } catch (error) {
+        console.error("Failed to load recent messages:", error);
+      }
+    };
+
+    loadRecentMessages();
+  }, [BACKEND_URL]);
 
   useEffect(() => {
     const newClient = new Client({

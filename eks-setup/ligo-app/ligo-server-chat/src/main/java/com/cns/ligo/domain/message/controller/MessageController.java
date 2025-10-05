@@ -2,8 +2,10 @@ package com.cns.ligo.domain.message.controller;
 
 import com.cns.ligo.domain.message.model.Message;
 import com.cns.ligo.domain.message.model.MessageType;
+import com.cns.ligo.domain.message.model.MessageEntity;
 import com.cns.ligo.domain.message.broker.JsonMessageSenderBroker;
 import com.cns.ligo.domain.message.broker.Sender;
+import com.cns.ligo.domain.message.service.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -17,21 +19,30 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
+@RestController
 public class MessageController {
 
   private final Sender sender;
   private final SimpMessageSendingOperations messagingTemplate;
   private final JsonMessageSenderBroker jsonMessageSenderBroker;
+  private final MessageService messageService;
 
   private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
   public MessageController(Sender sender, SimpMessageSendingOperations messagingTemplate,
-      JsonMessageSenderBroker jsonMessageSenderBroker) {
+      JsonMessageSenderBroker jsonMessageSenderBroker, MessageService messageService) {
     this.sender = sender;
     this.messagingTemplate = messagingTemplate;
     this.jsonMessageSenderBroker = jsonMessageSenderBroker;
+    this.messageService = messageService;
   }
 
   // noti to all user when someone connects
@@ -45,6 +56,26 @@ public class MessageController {
       headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
     }
     return chatMessage;
+  }
+
+  // REST endpoint to get recent messages
+  @GetMapping("/api/messages/recent")
+  public ResponseEntity<List<Message>> getRecentMessages() {
+    try {
+      List<MessageEntity> entities = messageService.getRecentMessages(10);
+      List<Message> messages = entities.stream()
+          .map(entity -> Message.builder()
+              .sender(entity.getSender())
+              .content(entity.getContent())
+              .type(MessageType.valueOf(entity.getMessageType()))
+              .build())
+          .collect(Collectors.toList());
+      logger.info("Retrieved {} recent messages from database", messages.size());
+      return ResponseEntity.ok(messages);
+    } catch (Exception e) {
+      logger.error("Failed to retrieve recent messages", e);
+      return ResponseEntity.ok(List.of());
+    }
   }
 
   // send message
@@ -84,6 +115,20 @@ public class MessageController {
   @KafkaListener(topics = "messaging", groupId = "chat")
   public void consume(Message chatMessage) {
     logger.info("Received message from Kafka: " + chatMessage);
+    
+    // Persist message to database
+    try {
+      messageService.saveMessage(
+          chatMessage.getSender(),
+          chatMessage.getContent(),
+          chatMessage.getType() != null ? chatMessage.getType().toString() : "CHAT",
+          "default"
+      );
+      logger.info("Message persisted to database");
+    } catch (Exception e) {
+      logger.error("Failed to persist message to database", e);
+    }
+    
     messagingTemplate.convertAndSend("/topic/public", chatMessage);
   }
 
