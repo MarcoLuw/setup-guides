@@ -1,0 +1,182 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_HUB = "hoanganh26"
+        IMAGE_NAME_1 = "ligo-server-chat"
+        IMAGE_NAME_2 = "ligo-server-trans"
+        IMAGE_NAME_REACT = "ligo-client"
+
+        AWS_REGION = "ap-northeast-2"
+        EKS_CLUSTER_NAME = "eks-cluster-demo"
+        // EC2_USER = "ec2-user"
+        // EC2_HOST = "13.125.71.51"
+        // SSH_KEY = "~/.ssh/huyen.pem"
+        // CONTAINER_NAME_1 = "ligo-server-chat"
+        // CONTAINER_NAME_2 = "ligo-server-trans"
+        // CONTAINER_NAME_REACT = "ligo-client"
+        // SERVER_CHAT_SECRET_PROPERTIES = credentials('application-secret-chat')
+        // SERVER_TRANS_SECRET_PROPERTIES = credentials('application-secret-trans')
+        // CLIENT_ENV = credentials('client-env')
+    }
+    tools {
+        gradle 'Gradle 8.12'
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Chat Service') {
+            steps {
+                script {
+                    dir('ligo-server-chat') {  // Chạy lệnh bên trong thư mục microservice1
+                        // sh 'gradle clean build'
+                        withCredentials([file(credentialsId: 'application-secret-chat-hanh', variable: 'SERVER_CHAT_SECRET_PROPERTIES_FILE')]) {
+                            sh 'cp -f $SERVER_CHAT_SECRET_PROPERTIES_FILE src/main/resources/application-secret.properties'
+                            sh 'gradle clean build -x test'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Translation Service') {
+            steps {
+                script {
+                    dir('ligo-server-trans') {  // Chạy lệnh bên trong thư mục microservice1
+                        // sh 'gradle clean build'
+                        withCredentials([file(credentialsId: 'application-secret-trans-hanh', variable: 'SERVER_TRANS_SECRET_PROPERTIES_FILE')]) {
+                            sh 'cp -f $SERVER_TRANS_SECRET_PROPERTIES_FILE src/main/resources/application-secret.properties'
+                            sh 'gradle clean build -x test'
+                        }
+                    }
+                }
+            }
+        }
+
+        
+        stage('Build Server Docker Images') {
+            steps {
+                script {
+                    sh "docker rmi ${DOCKER_HUB}/${IMAGE_NAME_1} || true" 
+                    sh "docker rmi ${DOCKER_HUB}/${IMAGE_NAME_2} || true"
+                    // sh "docker rmi ${DOCKER_HUB}/${IMAGE_NAME_REACT} || true"
+                    // Build Docker images for each microservice
+                    sh "docker build -t ${DOCKER_HUB}/${IMAGE_NAME_1} ./ligo-server-chat"
+                    sh "docker build -t ${DOCKER_HUB}/${IMAGE_NAME_2} ./ligo-server-trans"
+                    // sh "docker build -t ${DOCKER_HUB}/${IMAGE_NAME_REACT} ./ligo-client"
+                }
+            }
+        }
+
+        stage('Build React Docker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'env-client', variable: 'REACT_ENV_CONTENT')]) {
+                    script {
+                        sh "docker rmi ${DOCKER_HUB}/${IMAGE_NAME_REACT} || true"
+                        sh 'echo "$REACT_ENV_CONTENT" > ligo-client/.env'
+                        sh "docker build -t ${DOCKER_HUB}/${IMAGE_NAME_REACT} ./ligo-client"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    // Login to Docker Hub using credentials
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker_hub_cred') {
+                        // Push Docker images to Docker Hub
+                        sh "docker push ${DOCKER_HUB}/${IMAGE_NAME_1}"
+                        sh "docker push ${DOCKER_HUB}/${IMAGE_NAME_2}"
+                        sh "docker push ${DOCKER_HUB}/${IMAGE_NAME_REACT}"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY'),
+                                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_KEY')]) {
+                        sh """
+                            aws configure set aws_access_key_id $AWS_ACCESS_KEY
+                            aws configure set aws_secret_access_key $AWS_SECRET_KEY
+                            aws configure set region ${AWS_REGION}
+
+                            # Update kubeconfig to access EKS cluster
+                            aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+
+                            # Apply Kubernetes manifests
+                            # kubectl apply -f eks/configmap/chat-cm.yaml
+                            # kubectl apply -f eks/configmap/client-cm.yaml
+                            # kubectl apply -f eks/secret/trans-secret.yaml
+
+                            # kubectl apply -f eks/service/chat-svc.yaml
+                            # kubectl apply -f eks/service/trans-svc.yaml
+                            # kubectl apply -f eks/service/client-svc.yaml
+
+                            # kubectl apply -f eks/ingress/ingress-nginx.yaml
+
+                            # Apply Kubernetes manifests
+                            kubectl apply -f eks/deployment/chat.yaml
+                            kubectl apply -f eks/deployment/trans.yaml
+                            kubectl apply -f eks/deployment/client.yaml
+
+                            # Roll out new deployment
+                            kubectl rollout restart deployment ligo-server-chat
+                            kubectl rollout restart deployment ligo-server-trans
+                            kubectl rollout restart deployment react-client
+                        """
+                    }
+                }
+            }
+        }
+
+        // stage('Deploy to AWS') {
+        //     steps {
+        //         script {
+        //             // Deploy the containers using Docker on EC2 (you can use Docker Compose or individual commands)
+        //             sh """
+        //                 sudo ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+
+        //                     # Stop and remove old containers
+        //                     docker stop ${CONTAINER_NAME_1} || true
+        //                     docker rm ${CONTAINER_NAME_1} || true
+        //                     docker stop ${CONTAINER_NAME_2} || true
+        //                     docker rm ${CONTAINER_NAME_2} || true
+        //                     docker stop ${CONTAINER_NAME_REACT} || true
+        //                     docker rm ${CONTAINER_NAME_REACT} || true
+
+        //                     # remove old images
+        //                     docker rmi ${DOCKER_HUB}/${IMAGE_NAME_1} || true
+        //                     docker rmi ${DOCKER_HUB}/${IMAGE_NAME_2} || true
+        //                     docker rmi ${DOCKER_HUB}/${IMAGE_NAME_REACT} || true
+
+        //                     # Pull latest Docker images
+        //                     docker pull ${DOCKER_HUB}/${IMAGE_NAME_1}
+        //                     docker pull ${DOCKER_HUB}/${IMAGE_NAME_2}
+        //                     docker pull ${DOCKER_HUB}/${IMAGE_NAME_REACT}
+
+        //                     # Run new containers
+        //                     docker run -d --name ${CONTAINER_NAME_1} -p 8083:8083 ${DOCKER_HUB}/${IMAGE_NAME_1}
+        //                     docker run -d --name ${CONTAINER_NAME_2} -p 8089:8088 ${DOCKER_HUB}/${IMAGE_NAME_2}
+        //                     docker run -d --name ${CONTAINER_NAME_REACT} -p 3000:80 ${DOCKER_HUB}/${IMAGE_NAME_REACT}
+        //                 '
+        //             """
+        //         }
+        //     }
+        // }
+    }
+    post {
+        success {
+            echo 'Deployment completed successfully.'
+        }
+        failure {
+            echo 'Deployment failed.'
+        }
+    }
+}

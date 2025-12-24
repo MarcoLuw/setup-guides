@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::MY-BUCKET/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:PrincipalOrgID": "o-123456"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalAccount": "${aws:ResourceAccount}"
+        }
+      }
+    }
+  ]
+}

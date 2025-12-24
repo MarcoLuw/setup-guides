@@ -1,0 +1,87 @@
+# =============================================================================
+# Spring Boot Kafka Configuration for AWS MSK (IAM Authentication)
+# =============================================================================
+
+spring:
+  application:
+    name: msk-spring-demo
+
+  # Load environment variables from .env file
+  config:
+    import: optional:file:.env[.properties]
+
+  kafka:
+    # BOOTSTRAP SERVERS (from .env: KAFKA_BOOTSTRAP_SERVERS)
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+    # Topic name (from .env: KAFKA_TOPIC_NAME)
+    topic:
+      name: ${KAFKA_TOPIC_NAME:demo-topic}
+
+    # PRODUCER CONFIGURATION
+    producer:
+      client-id: msk-producer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+
+    # CONSUMER CONFIGURATION
+    consumer:
+      group-id: msk-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
+    # IAM AUTHENTICATION
+    security:
+      protocol: SASL_SSL
+    properties:
+      sasl.mechanism: AWS_MSK_IAM
+      sasl.jaas.config: >
+        software.amazon.msk.auth.iam.IAMLoginModule required;
+      sasl.client.callback.handler.class: software.amazon.msk.auth.iam.IAMClientCallbackHandler
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# LOGGING - Reduce console noise
+logging:
+  level:
+    root: WARN
+    com.example.mskdemo: INFO
+    org.springframework.boot: INFO
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN
+  pattern:
+    console: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+# =============================================================================
+# COMMENTED OUT PROFILES (for reference)
+# =============================================================================
+
+# # PROFILE: plaintext (Local Development)
+# ---
+# spring:
+#   config:
+#     activate:
+#       on-profile: plaintext
+#   kafka:
+#     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+# # PROFILE: sasl-scram (SASL/SCRAM-SHA-512 Authentication)
+# ---
+# spring:
+#   config:
+#     activate:
+#       on-profile: sasl-scram
+#   kafka:
+#     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+#     properties:
+#       security.protocol: SASL_SSL
+#       sasl.mechanism: SCRAM-SHA-512
+#       sasl.jaas.config: >
+#         org.apache.kafka.common.security.scram.ScramLoginModule required
+#         username="${MSK_USERNAME}"
+#         password="${MSK_PASSWORD}";

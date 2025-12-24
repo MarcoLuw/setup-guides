@@ -1,0 +1,20 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": ["lambda:CreateFunction", "lambda:UpdateFunctionConfiguration"],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "lambda:VpcIds": "true"
+        }
+      }
+    }
+  ]
+}

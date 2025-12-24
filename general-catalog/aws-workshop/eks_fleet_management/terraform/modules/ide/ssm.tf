@@ -1,0 +1,2 @@
+# SSM Parameter Store configuration
+

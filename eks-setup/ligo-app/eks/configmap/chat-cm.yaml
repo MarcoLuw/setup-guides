@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: chat-config
-data:
-  FRONTEND_URI: "http://a0cd0ecf534dc4c7eaf06493f9ebf310-1479717945.ap-northeast-2.elb.amazonaws.com/dashboard/"
-  KAFKA_BOOTSTRAP_SERVERS: "http://kafka-service.kafka.svc.cluster.local:29092"

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ligo-server-trans
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ligo-server-trans
+  template:
+    metadata:
+      labels:
+        app: ligo-server-trans
+    spec:
+      containers:
+        - name: ligo-server-trans
+          image: hoanganh26/ligo-server-trans
+          ports:
+            - containerPort: 8088
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "900m"
+              memory: "1Gi"
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-config
+                  key: KAFKA_BOOTSTRAP_SERVERS
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: groq-api-secret
+                  key: GROQ_API_KEY
+            - name: GROQ_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: groq-api-secret
+                  key: GROQ_API_URL
+

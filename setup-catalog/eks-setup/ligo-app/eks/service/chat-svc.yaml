@@ -1,0 +1,41 @@
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: chat-service
+# spec:
+#   selector:
+#     app: ligo-server-chat
+#   ports:
+#     - protocol: TCP
+#       port: 8083
+#       targetPort: 8083
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: chat-lb-service
+# spec:
+#   selector:
+#     app: ligo-server-chat
+#   ports:
+#     - protocol: TCP
+#       port: 8083
+#       targetPort: 8083
+#   type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-nodeport-service
+spec:
+  selector:
+    app: ligo-server-chat
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+      nodePort: 30883  # Optional: Choose a port between 30000-32767
+  type: NodePort

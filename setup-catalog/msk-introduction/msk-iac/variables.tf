@@ -1,0 +1,11 @@
+variable "aws_region" { type = string }
+variable "key_name" { type = string }
+variable "allowed_ssh_cidr" { type = string }
+variable "vpc_cidr" { type = string }
+variable "public_subnet_cidrs" { type = list(string) }
+variable "private_subnet_cidrs" { type = list(string) }
+variable "azs" { type = list(string) }
+variable "msk_cluster_name" { type = string }
+variable "kafka_version" { type = string }
+variable "broker_instance_type" { type = string }
+variable "ebs_gb" { type = number }

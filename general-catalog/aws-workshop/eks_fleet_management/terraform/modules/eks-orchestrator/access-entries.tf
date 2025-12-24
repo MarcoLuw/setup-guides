@@ -1,0 +1,2 @@
+# EKS access entries configuration
+

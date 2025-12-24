@@ -1,0 +1,9 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: remarkjs_slides
+    ports:
+      - "8088:80" # Maps local port 8088 to Nginx container's port 80
+    volumes:
+      - ./docs/slides:/usr/share/nginx/html:ro # Mounts the local `slides` directory as read-only
+    restart: unless-stopped

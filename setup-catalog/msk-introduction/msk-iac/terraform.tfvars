@@ -1,0 +1,11 @@
+aws_region           = "ap-northeast-2"
+key_name             = "key1"
+allowed_ssh_cidr     = "0.0.0.0/0" # replace with your IP
+vpc_cidr             = "10.20.0.0/16"
+public_subnet_cidrs  = ["10.20.0.0/24"]
+private_subnet_cidrs = ["10.20.11.0/24", "10.20.12.0/24", "10.20.13.0/24"]
+azs                  = [] # leave empty to auto-select
+msk_cluster_name     = "prod-msk-cluster"
+kafka_version        = "3.7.x"
+broker_instance_type = "kafka.m5.large"
+ebs_gb               = 100

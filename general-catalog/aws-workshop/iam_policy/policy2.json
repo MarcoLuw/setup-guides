@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/team": "admin"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/team": "admin"
+        }
+      }
+    },
+    {
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/team": "network-admin"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/team": ["admin", "network-admin"]
+        }
+      }
+    }
+  ]
+}

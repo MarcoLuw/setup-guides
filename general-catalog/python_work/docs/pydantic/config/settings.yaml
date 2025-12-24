@@ -1,0 +1,9 @@
+github:
+    clone_directory: "/engn001/python_work/docs/pydantic"
+
+openrouter:
+    api_endpoint: "https://openrouter.ai/api/v1/chat/completions"
+    model: "google/gemini-2.5-pro-preview"
+
+google_gemini:
+    model: "models/gemini-2.5-pro"
