@@ -16,23 +16,23 @@ Since this is a growing repository, I plan to add more not only instructions and
 Will be updated soon! Happy new year 2026!
 
 ### 2025
-#### 1. Projects and Experiments
+#### Projects and Experiments
 - [GitOps platform](https://github.com/MarcoLuw/bi-gitops) - A GitOps platform using ArgoCD, Terraform, and Kubernetes for automated infrastructure and application deployment.
 - [MLOps OSS Platform](https://gitlab.com/mlops-oss) - A end-to-end MLOps platform project using numerous open-source tools to facilitate machine learning lifecycle management.
 
-#### 2. Setup Guides
+#### Setup Guides
 - [Jenkins and Gitlab CI/CD setup guide](./setup-catalog/jenkins-gitlab-monitoring/setup.md)
 - [EKS cluster setup guide](./setup-catalog/eks-setup/setup.md)
 - [First thought in AWS Architecture design](./setup-catalog/aws-architecture-design/main-architecture-setup.md)
 - [MSK cluster setup guide](./setup-catalog/msk-introduction/setup.md)
 - [ClickHouse cluster with Docker](./setup-catalog/clickhouse-playground/README.md)
 
-#### 3. Workshops
+#### Workshops
 - [Hashicorp Vault Introduction](./sharing-workshop/docs/slides/vault/vault-101-introduction-and-integration-k8s-and-gitlab.pdf)
 - [K8s 4'C Security](./sharing-workshop/docs/slides/k8s-security/Kubernetes-Security-707.pdf)
 - [Docker Introduction](./sharing-workshop/docs/slides/docker-ws/Docker_deep_dive.pdf)
 
-#### 4. General Knowledge
+#### General Knowledge
 - [AWS Workshop Notes](./general-catalog/aws-workshop/README.md)
 - [Python Notes](./general-catalog/python_work/)
 
