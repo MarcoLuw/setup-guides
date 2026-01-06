@@ -2,7 +2,7 @@
 An island for many wonderful things in my devops and cloud engineering journey. <br />
 Here you can find various setup guides, architecture design thoughts, and best practices that I've gathered over my development journey. <br />
 
-Main sections in this repository:
+### Main sections in this repository:
 1. **[Projects and Experiments](#projects-and-experiments)**: Interesting projects I've worked or been working on, showcasing the practical application and best practices of various technologies.
 2. **[Setup Guides](#setup-guides):** Step-by-step instructions for setting up various tools and services
 3. **[Workshops](#workshops):** Materials and resources from seminars, talks, or workshops I've conducted.
@@ -16,25 +16,25 @@ Since this is a growing repository, I plan to add more not only instructions and
 Will be updated soon! Happy new year 2026!
 
 ### 2025
-#### Projects and Experiments
-1. [GitOps platform](https://github.com/MarcoLuw/bi-gitops) - A GitOps platform using ArgoCD, Terraform, and Kubernetes for automated infrastructure and application deployment.
-2. [MLOps OSS Platform](https://gitlab.com/mlops-oss) - A end-to-end MLOps platform project using numerous open-source tools to facilitate machine learning lifecycle management.
+#### 1. Projects and Experiments
+- [GitOps platform](https://github.com/MarcoLuw/bi-gitops) - A GitOps platform using ArgoCD, Terraform, and Kubernetes for automated infrastructure and application deployment.
+- [MLOps OSS Platform](https://gitlab.com/mlops-oss) - A end-to-end MLOps platform project using numerous open-source tools to facilitate machine learning lifecycle management.
 
-#### Setup Guides
-1. [Jenkins and Gitlab CI/CD setup guide](./setup-catalog/jenkins-gitlab-monitoring/setup.md)
-2. [EKS cluster setup guide](./setup-catalog/eks-setup/setup.md)
-3. [First thought in AWS Architecture design](./setup-catalog/aws-architecture-design/main-architecture-setup.md)
-4. [MSK cluster setup guide](./setup-catalog/msk-introduction/setup.md)
-5. [ClickHouse cluster with Docker](./setup-catalog/clickhouse-playground/README.md)
+#### 2. Setup Guides
+- [Jenkins and Gitlab CI/CD setup guide](./setup-catalog/jenkins-gitlab-monitoring/setup.md)
+- [EKS cluster setup guide](./setup-catalog/eks-setup/setup.md)
+- [First thought in AWS Architecture design](./setup-catalog/aws-architecture-design/main-architecture-setup.md)
+- [MSK cluster setup guide](./setup-catalog/msk-introduction/setup.md)
+- [ClickHouse cluster with Docker](./setup-catalog/clickhouse-playground/README.md)
 
-#### Workshops
-1. [Hashicorp Vault Introduction](./sharing-workshop/docs/slides/vault/vault-101-introduction-and-integration-k8s-and-gitlab.pdf)
-2. [K8s 4'C Security](./sharing-workshop/docs/slides/k8s-security/Kubernetes-Security-707.pdf)
-3. [Docker Introduction](./sharing-workshop/docs/slides/docker-ws/Docker_deep_dive.pdf)
+#### 3. Workshops
+- [Hashicorp Vault Introduction](./sharing-workshop/docs/slides/vault/vault-101-introduction-and-integration-k8s-and-gitlab.pdf)
+- [K8s 4'C Security](./sharing-workshop/docs/slides/k8s-security/Kubernetes-Security-707.pdf)
+- [Docker Introduction](./sharing-workshop/docs/slides/docker-ws/Docker_deep_dive.pdf)
 
-#### General Knowledge
-1. [AWS Workshop Notes](./general-catalog/aws-workshop/README.md)
-2. [Python Notes](./general-catalog/python_work/)
+#### 4. General Knowledge
+- [AWS Workshop Notes](./general-catalog/aws-workshop/README.md)
+- [Python Notes](./general-catalog/python_work/)
 
 ## Author
 Hoang Anh Lu (Andre Lu) - DevOps and Software Engineer <br />
